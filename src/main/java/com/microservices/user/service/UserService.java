@@ -1,5 +1,6 @@
 package com.microservices.user.service;
 
+import com.microservices.user.controller.dto.UserDTO;
 import com.microservices.user.feing.CarFeign;
 import com.microservices.user.feing.MotorcycleFeign;
 import com.microservices.user.model.Car;
@@ -30,8 +31,13 @@ public class UserService {
         return bd.findById(id);
     }
 
-    public User save(User user) {
-        return bd.save(user);
+    public User save(UserDTO user) {
+
+        User newUser = User.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .build();
+        return bd.save(newUser);
     }
 
     public List<Car> getCars(int userId) {
@@ -63,7 +69,7 @@ public class UserService {
 
         result.put("User",user);
         List<Car> cars = carFeign.getCars(userId);
-        if(cars.isEmpty()) {
+        if(cars == null || cars.isEmpty()) {
             result.put("Carros", "El usuario no tiene carros");
         }
         else {
@@ -71,7 +77,7 @@ public class UserService {
         }
 
         List<Motorcycle> motorcycles = motorcycleFeign.getMotorcycle(userId);
-        if(motorcycles.isEmpty()) {
+        if(motorcycles == null || motorcycles.isEmpty()) {
             result.put("Motos", "El usuario no tiene motos");
         }
         else {

@@ -1,5 +1,6 @@
 package com.microservices.user.controller;
 
+import com.microservices.user.controller.dto.UserDTO;
 import com.microservices.user.model.Car;
 import com.microservices.user.model.Motorcycle;
 import com.microservices.user.model.User;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> saveUser(@RequestBody User user){
+    public ResponseEntity<User> saveUser(@RequestBody UserDTO user){
         User newUser = userService.save(user);
         return ResponseEntity.ok(newUser);
     }
@@ -79,6 +80,9 @@ public class UserController {
     @GetMapping("/all/{userId}")
     public ResponseEntity<Map<String, Object>> listAllVehicles(@PathVariable("userId") int userId){
         Map<String,Object> result = userService.getUserAndVehicles(userId);
+        if(result == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(result);
     }
 }
